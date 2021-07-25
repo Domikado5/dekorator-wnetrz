@@ -32,6 +32,12 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "shaderprogram.h"
 #include "myCube.h"
 #include "myTeapot.h"
+#include <vector>
+
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 float speed_x=0;
 float speed_y=0;
@@ -49,11 +55,18 @@ ShaderProgram *sp;
 
 
 //Odkomentuj, żeby rysować czajnik
-float* vertices = myTeapotVertices;
-float* normals = myTeapotVertexNormals;
-float* texCoords = myTeapotTexCoords;
-float* colors = myTeapotColors;
-int vertexCount = myTeapotVertexCount;
+// float* vertices = myTeapotVertices;
+// float* normals = myTeapotVertexNormals;
+// float* texCoords = myTeapotTexCoords;
+// float* colors = myTeapotColors;
+// int vertexCount = myTeapotVertexCount;
+
+std::vector<glm::vec4> vertices;
+std::vector<glm::vec4> normals;
+std::vector<glm::vec2> texCoords;
+std::vector<glm::vec4> colors;
+std::vector<unsigned int> indices;
+int vertexCount;
 
 GLuint tex0;
 GLuint tex1;
@@ -83,6 +96,36 @@ void windowResizeCallback(GLFWwindow* window,int width,int height) {
     if (height==0) return;
     aspectRatio=(float)width/(float)height;
     glViewport(0,0,width,height);
+}
+
+void loadModel(const char* filename, std::vector<glm::vec4>& v, std::vector<glm::vec4>& n, std::vector<glm::vec2>& uv, std::vector<unsigned int>& ind){
+	Assimp::Importer imp;
+	const aiScene* scene = imp.ReadFile(filename, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals);
+	std::string err = imp.GetErrorString();
+	if(err.length() != 0){
+		printf("Error While Loading Model %s : %s\n", filename, err);
+	}
+	aiMesh* mesh = scene->mMeshes[0];
+	for (int i = 0; i < mesh->mNumVertices; i++) {
+		aiVector3D vertex = mesh->mVertices[i];
+		v.push_back(glm::vec4(vertex.x, vertex.y, vertex.z, 1));
+
+		aiVector3D normal = mesh->mNormals[i];
+		n.push_back(glm::vec4(normal.x, normal.y, normal.z, 0));
+
+		aiVector3D texCoords = mesh->mTextureCoords[0][i];
+		uv.push_back(glm::vec2(texCoords.x, texCoords.y));
+	}
+
+	for (int i = 0; i < mesh->mNumFaces; i++) {
+		aiFace& face = mesh->mFaces[i];
+
+		for (int j = 0; j < face.mNumIndices; j++) {
+			ind.push_back(face.mIndices[j]);
+		}
+	}
+
+	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex]; 
 }
 
 GLuint readTexture(const char* filename) {	
@@ -119,6 +162,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 	sp=new ShaderProgram("v_simplest.glsl",NULL,"f_simplest.glsl");
 	tex0 = readTexture("metal.png");
 	tex1 = readTexture("sky.png");
+	loadModel("models/chair.obj", vertices, normals, texCoords, indices);
 }
 
 
@@ -128,8 +172,6 @@ void freeOpenGLProgram(GLFWwindow* window) {
 
     delete sp;
 }
-
-
 
 
 //Procedura rysująca zawartość sceny
@@ -145,6 +187,7 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y) {
     glm::mat4 P=glm::perspective(50.0f*PI/180.0f, aspectRatio, 0.01f, 50.0f); //Wylicz macierz rzutowania
 
     glm::mat4 M=glm::mat4(1.0f);
+	// M=glm::scale(M, glm::vec3(0.5f, 0.5f, 0.5f));
 	M=glm::rotate(M,angle_y,glm::vec3(1.0f,0.0f,0.0f)); //Wylicz macierz modelu
 	M=glm::rotate(M,angle_x,glm::vec3(0.0f,1.0f,0.0f)); //Wylicz macierz modelu
 
@@ -155,16 +198,13 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y) {
     glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M));
 
     glEnableVertexAttribArray(sp->a("vertex"));  //Włącz przesyłanie danych do atrybutu vertex
-    glVertexAttribPointer(sp->a("vertex"),4,GL_FLOAT,false,0,vertices); //Wskaż tablicę z danymi dla atrybutu vertex
-
-	glEnableVertexAttribArray(sp->a("color"));  //Włącz przesyłanie danych do atrybutu color
-	glVertexAttribPointer(sp->a("color"), 4, GL_FLOAT, false, 0, colors); //Wskaż tablicę z danymi dla atrybutu color
+    glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, vertices.data()); //Wskaż tablicę z danymi dla atrybutu vertex
 
 	glEnableVertexAttribArray(sp->a("normal"));  //Włącz przesyłanie danych do atrybutu normal
-	glVertexAttribPointer(sp->a("normal"), 4, GL_FLOAT, false, 0, normals); //Wskaż tablicę z danymi dla atrybutu normal
+	glVertexAttribPointer(sp->a("normal"), 4, GL_FLOAT, false, 0, normals.data()); //Wskaż tablicę z danymi dla atrybutu normal
 
 	glEnableVertexAttribArray(sp->a("texCoord0"));  //Włącz przesyłanie danych do atrybutu texCoord0
-	glVertexAttribPointer(sp->a("texCoord0"), 2, GL_FLOAT, false, 0, texCoords); //Wskaż tablicę z danymi dla atrybutu texCoord0
+	glVertexAttribPointer(sp->a("texCoord0"), 2, GL_FLOAT, false, 0, texCoords.data()); //Wskaż tablicę z danymi dla atrybutu texCoord0
 
 	glUniform1i(sp->u("textureMap0"), 0);
 	glActiveTexture(GL_TEXTURE0);
@@ -174,10 +214,9 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y) {
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, tex1);
 
-    glDrawArrays(GL_TRIANGLES,0,vertexCount); //Narysuj obiekt
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data()); //Narysuj obiekt
 
     glDisableVertexAttribArray(sp->a("vertex"));  //Wyłącz przesyłanie danych do atrybutu vertex
-	glDisableVertexAttribArray(sp->a("color"));  //Wyłącz przesyłanie danych do atrybutu color
 	glDisableVertexAttribArray(sp->a("normal"));  //Wyłącz przesyłanie danych do atrybutu normal
 	glDisableVertexAttribArray(sp->a("texCoord0"));  //Wyłącz przesyłanie danych do atrybutu texCoord0
 

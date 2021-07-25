@@ -1,4 +1,4 @@
-LIBS=-lGL -lglfw -lGLEW
+LIBS=-lGL -lglfw -lGLEW -lassimp
 HEADERS=constants.h  lodepng.h  myCube.h  myTeapot.h  shaderprogram.h
 FILES=lodepng.cpp  main_file.cpp  shaderprogram.cpp
 
