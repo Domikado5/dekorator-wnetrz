@@ -124,7 +124,6 @@ GLuint readTexture(const char* filename) {
       return tex;
     }
 
-glm::mat4 M;
 
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
@@ -137,10 +136,8 @@ void initOpenGLProgram(GLFWwindow* window) {
 	sp=new ShaderProgram("v_simplest.glsl",NULL,"f_simplest.glsl");
 	tex0 = readTexture("metal.png");
 	tex1 = readTexture("sky.png");
-	
-	M=glm::mat4(1.0f);
 
-	chair = Furniture("models/chair.obj", tex0, M);
+	chair = Furniture("models/chair.obj", tex0);
 }
 
 
@@ -164,6 +161,8 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y) {
 
     glm::mat4 P=glm::perspective(50.0f*PI/180.0f, aspectRatio, 0.01f, 50.0f); //Wylicz macierz rzutowania
 
+	glm::mat4 M=glm::mat4(1.0f);
+	
 	// M=glm::scale(M, glm::vec3(0.5f, 0.5f, 0.5f));
 	M=glm::rotate(M,angle_y,glm::vec3(1.0f,0.0f,0.0f)); //Wylicz macierz modelu
 	M=glm::rotate(M,angle_x,glm::vec3(0.0f,1.0f,0.0f)); //Wylicz macierz modelu
@@ -174,7 +173,7 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y) {
     glUniformMatrix4fv(sp->u("V"),1,false,glm::value_ptr(V));
     glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M));
 
-	chair.drawModel(sp);
+	chair.drawModel(sp, M);
 
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
 }

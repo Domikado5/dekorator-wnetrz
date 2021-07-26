@@ -22,7 +22,7 @@ public:
 	std::vector<glm::vec2> uv; // UV mapping (texture coordinates)
 	std::vector<unsigned int> indices;
 
-	Furniture(std::string, GLuint, glm::mat4); // konstruktor
+	Furniture(std::string, GLuint); // konstruktor
 
 	Furniture(){};
 
@@ -30,5 +30,5 @@ public:
 	void translate(glm::mat4, glm::vec3); // przesuwanie
 	void rotate(glm::mat4, float, glm::vec3); // obracanie
 	void scale(glm::mat4, glm::vec3); // skalowanie
-	void drawModel(ShaderProgram *sp);
+	void drawModel(ShaderProgram *sp, glm::mat4);
 };

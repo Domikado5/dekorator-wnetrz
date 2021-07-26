@@ -31,9 +31,9 @@ void Furniture::loadModel()
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 }
 
-Furniture::Furniture(std::string obj, GLuint tex, glm::mat4 matrix)
+Furniture::Furniture(std::string obj, GLuint tex)
 {
-	M = matrix;
+	M = glm::mat4(1.0f);
 	objPath = obj;
 	texture = tex;
 	this->loadModel();
@@ -54,11 +54,11 @@ void Furniture::translate(glm::mat4, glm::vec3 vec)
 	this->M = glm::translate(M, vec);
 }
 
-void Furniture::drawModel(ShaderProgram *sp)
+void Furniture::drawModel(ShaderProgram *sp, glm::mat4 matrix)
 {
 	sp->use();
 
-	glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M));
+	glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M*matrix));
 
 	glEnableVertexAttribArray(sp->a("vertex"));
 	glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, vertices.data());
