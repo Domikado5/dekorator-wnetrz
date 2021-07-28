@@ -74,89 +74,111 @@ GLuint tex0;
 GLuint tex1;
 
 Furniture chair;
-Furniture tab[10];
+std::vector<Furniture *> tab;
 
 //Procedura obsługi błędów
 void error_callback(int error, const char* description) {
 	fputs(description, stderr);
 }
 
+std::string mode = "c";
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     //if (action==GLFW_PRESS) {
-    //    if (key==GLFW_KEY_LEFT) speed_x=-PI/2;
-    //    if (key==GLFW_KEY_RIGHT) speed_x=PI/2;
-    //    if (key==GLFW_KEY_UP) speed_y=PI/2;
-    //    if (key==GLFW_KEY_DOWN) speed_y=-PI/2;
+       
     //}
-    //if (action==GLFW_RELEASE) {
-    //    if (key==GLFW_KEY_LEFT) speed_x=0;
-    //    if (key==GLFW_KEY_RIGHT) speed_x=0;
-    //    if (key==GLFW_KEY_UP) speed_y=0;
-    //    if (key==GLFW_KEY_DOWN) speed_y=0;
-    //}
+
 	if (action == GLFW_PRESS)
 	{
 		if ((mods & GLFW_MOD_ALT != 0) && (key == GLFW_KEY_0)) 
 		{
 			// wybiera pierwszy obiekt (ustawia jakas zmienna selected na 0, ktora defiiowalaby ktory obiekt jest wybrany)
-			// selected = 0;
+			selected = 0;
+			printf("Picked furniture %d", selected);
 		}
 		if ((mods & GLFW_MOD_ALT != 0) && (key == GLFW_KEY_1))
 		{
 			// wybiera drugi obiekt
-			// selected = 1;
+			selected = 1;
+			printf("Picked furniture %d", selected);
 		}
 		if (key == GLFW_KEY_R) // wybrany tryb rotacji
 		{
+			mode = "r";
+		}
+		if (mode == "r"){
 			if (key == GLFW_KEY_LEFT)
 			{
-				// tab[selected].rotate(glm::radians(-30.0f), glm::vec(0.0f, 1.0f, 0.0f)) // obraca wzgledem osi Y w lewo (chyba w lewo XD)
+				(*tab[selected]).rotate(glm::radians(-30.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // obraca wzgledem osi Y w lewo (chyba w lewo XD)
 			}
 			if (key == GLFW_KEY_RIGHT)
 			{
-				// tab[selected].rotate(glm::radians(30.0f), glm::vec(0.0f, 1.0f, 0.0f))
+				(*tab[selected]).rotate(glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			}
 			if (key == GLFW_KEY_UP)
 			{
-				// tab[selected].rotate(glm::radians(30.0f), glm::vec(1.0f, 0.0f, 0.0f)) // obraca wzgledem osi X w gore (chyba w gore XD)
+				(*tab[selected]).rotate(glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // obraca wzgledem osi X w gore (chyba w gore XD)
 			}
 			if (key == GLFW_KEY_DOWN)
 			{
-				// tab[selected].rotate(glm::radians(-30.0f), glm::vec(1.0f, 0.0f, 0.0f))
+				(*tab[selected]).rotate(glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			}
 		}
 		if (key == GLFW_KEY_M) // wybrany tryb przesuwania
 		{
+			mode = "m";
+		}
+		if (mode == "m"){
 			if (key == GLFW_KEY_LEFT)
 			{
-				// tab[selected].translate(glm::vec(-1.0f, 0.0f, 0.0f)) // przesuwa w lewo
+				(*tab[selected]).translate(glm::vec3(-1.0f, 0.0f, 0.0f)); // przesuwa w lewo
 			}
 			if (key == GLFW_KEY_RIGHT)
 			{
-				// tab[selected].translate(glm::vec(1.0f, 0.0f, 0.0f)) // w prawo
+				(*tab[selected]).translate(glm::vec3(1.0f, 0.0f, 0.0f)); // w prawo
 			}
 			if (key == GLFW_KEY_UP)
 			{
-				// tab[selected].translate(glm::vec(0.0f, 1.0f, 0.0f))
+				(*tab[selected]).translate(glm::vec3(0.0f, 1.0f, 0.0f));
 			}
 			if (key == GLFW_KEY_DOWN)
 			{
-				// tab[selected].translate(glm::vec(0.0f, 1.0f, 0.0f))
+				(*tab[selected]).translate(glm::vec3(0.0f, 1.0f, 0.0f));
 			}
 		}
 		if (key == GLFW_KEY_S) // tryb skalowania
 		{
+			mode = "s";
+		}
+		if (mode == "s"){
 			if (key == GLFW_KEY_UP)
 			{
-				// tab[selected].scale(glm::vec(1.5f, 1.5f, 1.5f)) // zwieksza
+				printf("skalowanie w gore\n");
+				(*tab[selected]).scale(glm::vec3(1.5f, 1.5f, 1.5f)); // zwieksza
 			}
 			if (key == GLFW_KEY_DOWN)
 			{
-				// tab[selected].scale(glm::vec(0.5f, 0.5f, 0.5f))
+				(*tab[selected]).scale(glm::vec3(0.5f, 0.5f, 0.5f));
 			}
 		}
+		if (key == GLFW_KEY_C) // tryb skalowania
+		{
+			mode = "c";
+		}
+		if (mode == "c"){
+			if (key==GLFW_KEY_LEFT) speed_x=-PI/2;
+			if (key==GLFW_KEY_RIGHT) speed_x=PI/2;
+			if (key==GLFW_KEY_UP) speed_y=PI/2;
+			if (key==GLFW_KEY_DOWN) speed_y=-PI/2;
+		}
 	}
+
+	if (action==GLFW_RELEASE) {
+       if (key==GLFW_KEY_LEFT) speed_x=0;
+       if (key==GLFW_KEY_RIGHT) speed_x=0;
+       if (key==GLFW_KEY_UP) speed_y=0;
+       if (key==GLFW_KEY_DOWN) speed_y=0;
+    }
 }
 
 void windowResizeCallback(GLFWwindow* window,int width,int height) {
@@ -202,7 +224,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 	tex1 = readTexture("sky.png");
 
 	chair = Furniture("models/chair.obj", tex0);
-	tab[0] = chair;
+	tab = {&chair};
 }
 
 

@@ -2,9 +2,9 @@
 
 #### Projekt na zajęcia Grafiki Komputerowej
 
-- [ ] Klasa furniture
+- [x] Klasa furniture
 - [ ] Model pomieszczenia
-- [ ] Skróty klawiszowe do manipulacji obiektami
+- [x] Skróty klawiszowe do manipulacji obiektami
 - [x] Ładowanie modeli z pliku `.obj`
 - [ ] Poprawne wczytywanie tekstur
 - [ ] Poprawne wczytywanie map

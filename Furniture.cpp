@@ -33,7 +33,7 @@ void Furniture::loadModel()
 
 Furniture::Furniture(std::string obj, GLuint tex)
 {
-	M = glm::mat4(1.0f);
+	this->M = glm::mat4(1.0f);
 	objPath = obj;
 	texture = tex;
 	this->loadModel();
