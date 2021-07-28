@@ -39,19 +39,19 @@ Furniture::Furniture(std::string obj, GLuint tex)
 	this->loadModel();
 }
 
-void Furniture::rotate(glm::mat4 M, float angle, glm::vec3 axis)
+void Furniture::rotate(float angle, glm::vec3 axis)
 {
-	this->M = glm::rotate(M, angle, axis);
+	this->M = glm::rotate(this->M, angle, axis);
 }
 
-void Furniture::scale(glm::mat4 M, glm::vec3 vec)
+void Furniture::scale(glm::vec3 vec)
 {
-	this->M = glm::scale(M, vec);
+	this->M = glm::scale(this->M, vec);
 }
 
-void Furniture::translate(glm::mat4, glm::vec3 vec)
+void Furniture::translate(glm::vec3 vec)
 {
-	this->M = glm::translate(M, vec);
+	this->M = glm::translate(this->M, vec);
 }
 
 void Furniture::drawModel(ShaderProgram *sp, glm::mat4 matrix)

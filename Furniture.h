@@ -27,8 +27,8 @@ public:
 	Furniture(){};
 
 	void loadModel(); // ladowanie modelu
-	void translate(glm::mat4, glm::vec3); // przesuwanie
-	void rotate(glm::mat4, float, glm::vec3); // obracanie
-	void scale(glm::mat4, glm::vec3); // skalowanie
+	void translate(glm::vec3); // przesuwanie
+	void rotate(float, glm::vec3); // obracanie
+	void scale(glm::vec3); // skalowanie
 	void drawModel(ShaderProgram *sp, glm::mat4);
 };
