@@ -35,6 +35,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <vector>
 
 #include "Furniture.h"
+#include "Room.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -43,6 +44,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 float speed_x=0;
 float speed_y=0;
 float aspectRatio=1;
+float zoom=-5.5;
 
 ShaderProgram *sp;
 
@@ -72,9 +74,13 @@ int selected = 0;
 
 GLuint tex0;
 GLuint tex1;
+GLuint tex_floor;
+GLuint tex_walls;
 
 Furniture chair;
 std::vector<Furniture *> tab;
+
+Room room;
 
 //Procedura obsługi błędów
 void error_callback(int error, const char* description) {
@@ -170,6 +176,8 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			if (key==GLFW_KEY_RIGHT) speed_x=PI/2;
 			if (key==GLFW_KEY_UP) speed_y=PI/2;
 			if (key==GLFW_KEY_DOWN) speed_y=-PI/2;
+			if (key==GLFW_KEY_LEFT_BRACKET) zoom-=1.0;
+			if (key==GLFW_KEY_RIGHT_BRACKET) zoom+=1.0;
 		}
 	}
 
@@ -220,8 +228,12 @@ void initOpenGLProgram(GLFWwindow* window) {
 	glfwSetKeyCallback(window,keyCallback);
 
 	sp=new ShaderProgram("v_simplest.glsl",NULL,"f_simplest.glsl");
-	tex0 = readTexture("metal.png");
+	tex0 = readTexture("bricks.png");
 	tex1 = readTexture("sky.png");
+	tex_floor = readTexture("textures/floor_wooden.png");
+	tex_walls = readTexture("textures/walls_old.png");
+
+	room = Room("models/floor.obj", tex_floor, "models/walls.obj", tex_walls);
 
 	chair = Furniture("models/chair.obj", tex0);
 	tab = {&chair};
@@ -242,7 +254,7 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::mat4 V=glm::lookAt(
-         glm::vec3(0, 0, -2.5),
+         glm::vec3(0, 0, zoom),
          glm::vec3(0,0,0),
          glm::vec3(0.0f,1.0f,0.0f)); //Wylicz macierz widoku
 
@@ -260,6 +272,8 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y) {
     glUniformMatrix4fv(sp->u("V"),1,false,glm::value_ptr(V));
     glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M));
 
+	room.drawFloor(sp, M);
+	room.drawWalls(sp, M);
 	chair.drawModel(sp, M);
 
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
@@ -277,7 +291,7 @@ int main(void)
 		exit(EXIT_FAILURE);
 	}
 
-	window = glfwCreateWindow(500, 500, "OpenGL", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
+	window = glfwCreateWindow(1280, 720, "OpenGL", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
 
 	if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
 	{
