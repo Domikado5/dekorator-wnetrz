@@ -30,5 +30,5 @@ public:
 	void translate(glm::vec3); // przesuwanie
 	void rotate(float, glm::vec3); // obracanie
 	void scale(glm::vec3); // skalowanie
-	void drawModel(ShaderProgram *sp, glm::mat4);
+	void drawModel(ShaderProgram *sp);
 };

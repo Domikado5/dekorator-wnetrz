@@ -30,6 +30,7 @@
     <ClCompile Include="Furniture.cpp" />
     <ClCompile Include="lodepng.cpp" />
     <ClCompile Include="main_file.cpp" />
+    <ClCompile Include="Room.cpp" />
     <ClCompile Include="shaderprogram.cpp" />
   </ItemGroup>
   <ItemGroup>

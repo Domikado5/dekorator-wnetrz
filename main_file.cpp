@@ -71,6 +71,7 @@ std::vector<glm::vec4> colors;
 std::vector<unsigned int> indices;
 int vertexCount;
 int selected = 0;
+glm::vec3 up = { 0.0f, 1.0f, 0.0f }, eye = { 0.0f, 0.0f, 0.0f }, center = { 0.0f, 0.0f, 0.0f };
 
 GLuint tex0;
 GLuint tex1;
@@ -172,12 +173,16 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			mode = "c";
 		}
 		if (mode == "c"){
-			if (key==GLFW_KEY_LEFT) speed_x=-PI/2;
-			if (key==GLFW_KEY_RIGHT) speed_x=PI/2;
-			if (key==GLFW_KEY_UP) speed_y=PI/2;
-			if (key==GLFW_KEY_DOWN) speed_y=-PI/2;
-			if (key==GLFW_KEY_LEFT_BRACKET) zoom-=1.0;
-			if (key==GLFW_KEY_RIGHT_BRACKET) zoom+=1.0;
+			//if (key==GLFW_KEY_LEFT) speed_x=-PI/2;
+			//if (key==GLFW_KEY_RIGHT) speed_x=PI/2;
+			//if (key==GLFW_KEY_UP) speed_y=PI/2;
+			//if (key==GLFW_KEY_DOWN) speed_y=-PI/2;
+			//if (key==GLFW_KEY_LEFT_BRACKET) zoom-=1.0;
+			//if (key==GLFW_KEY_RIGHT_BRACKET) zoom+=1.0;
+			if (key == GLFW_KEY_LEFT) {center += glm::vec3(-0.5f, 0.0f, 0.0f);}
+			if (key==GLFW_KEY_RIGHT) {center += glm::vec3(0.5f, 0.0f, 0.0f);}
+			if (key==GLFW_KEY_UP) {center += glm::vec3(0.0f, 0.5f, 0.0f);}
+			if (key==GLFW_KEY_DOWN) {center += glm::vec3(0.0f, -0.5f, 0.0f);}
 		}
 	}
 
@@ -253,28 +258,30 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y) {
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glm::mat4 V=glm::lookAt(
-         glm::vec3(0, 0, zoom),
-         glm::vec3(0,0,0),
-         glm::vec3(0.0f,1.0f,0.0f)); //Wylicz macierz widoku
+	//glm::mat4 V=glm::lookAt(
+         //glm::vec3(0, 0, zoom),
+         //glm::vec3(0,0,0),
+         //glm::vec3(0.0f,1.0f,0.0f)); //Wylicz macierz widoku
+	glm::mat4 V = glm::lookAt(eye, center, up);
 
     glm::mat4 P=glm::perspective(50.0f*PI/180.0f, aspectRatio, 0.01f, 50.0f); //Wylicz macierz rzutowania
 
 	glm::mat4 M=glm::mat4(1.0f);
 	
 	// M=glm::scale(M, glm::vec3(0.5f, 0.5f, 0.5f));
-	M=glm::rotate(M,angle_y,glm::vec3(1.0f,0.0f,0.0f)); //Wylicz macierz modelu
-	M=glm::rotate(M,angle_x,glm::vec3(0.0f,1.0f,0.0f)); //Wylicz macierz modelu
+	// M=glm::rotate(M,angle_y,glm::vec3(1.0f,0.0f,0.0f)); //Wylicz macierz modelu
+	// M=glm::rotate(M,angle_x,glm::vec3(0.0f,1.0f,0.0f)); //Wylicz macierz modelu
 
     sp->use();//Aktywacja programu cieniującego
     //Przeslij parametry programu cieniującego do karty graficznej
+	// Nwm czy to ponizej tez zakomentowac
     glUniformMatrix4fv(sp->u("P"),1,false,glm::value_ptr(P));
     glUniformMatrix4fv(sp->u("V"),1,false,glm::value_ptr(V));
     glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M));
 
-	room.drawFloor(sp, M);
-	room.drawWalls(sp, M);
-	chair.drawModel(sp, M);
+	room.drawFloor(sp);
+	room.drawWalls(sp);
+	chair.drawModel(sp);
 
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
 }

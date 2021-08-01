@@ -33,6 +33,6 @@ public:
 	Room(){};
 
 	void loadModel(); // ladowanie modelu
-	void drawFloor(ShaderProgram *sp, glm::mat4);
-    void drawWalls(ShaderProgram *sp, glm::mat4);
+	void drawFloor(ShaderProgram *sp);
+    void drawWalls(ShaderProgram *sp);
 };

@@ -54,11 +54,11 @@ void Furniture::translate(glm::vec3 vec)
 	this->M = glm::translate(this->M, vec);
 }
 
-void Furniture::drawModel(ShaderProgram *sp, glm::mat4 matrix)
+void Furniture::drawModel(ShaderProgram *sp)
 {
 	sp->use();
 
-	glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M*matrix));
+	glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M));
 
 	glEnableVertexAttribArray(sp->a("vertex"));
 	glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, vertices.data());

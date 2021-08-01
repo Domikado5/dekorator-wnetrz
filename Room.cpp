@@ -69,11 +69,11 @@ Room::Room(std::string floor, GLuint floor_tex, std::string walls, GLuint walls_
 	this->loadModel();
 }
 
-void Room::drawFloor(ShaderProgram *sp, glm::mat4 matrix)
+void Room::drawFloor(ShaderProgram *sp)
 {
 	sp->use();
 
-	glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M*matrix));
+	glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M));
 
 	glEnableVertexAttribArray(sp->a("vertex"));
 	glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, this->floor_vertices.data());
@@ -95,11 +95,11 @@ void Room::drawFloor(ShaderProgram *sp, glm::mat4 matrix)
 	glDisableVertexAttribArray(sp->a("texCoord0"));
 }
 
-void Room::drawWalls(ShaderProgram *sp, glm::mat4 matrix)
+void Room::drawWalls(ShaderProgram *sp)
 {
 	sp->use();
 
-	glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M*matrix));
+	glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M));
 
 	glEnableVertexAttribArray(sp->a("vertex"));
 	glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, this->walls_vertices.data());
