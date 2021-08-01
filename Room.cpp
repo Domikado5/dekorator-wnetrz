@@ -120,3 +120,8 @@ void Room::drawWalls(ShaderProgram *sp)
 	glDisableVertexAttribArray(sp->a("normal"));
 	glDisableVertexAttribArray(sp->a("texCoord0"));
 }
+
+void Room::drawRoom(ShaderProgram *sp){
+	Room::drawFloor(sp);
+	Room::drawWalls(sp);
+}

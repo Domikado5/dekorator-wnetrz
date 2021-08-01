@@ -35,4 +35,5 @@ public:
 	void loadModel(); // ladowanie modelu
 	void drawFloor(ShaderProgram *sp);
     void drawWalls(ShaderProgram *sp);
+	void drawRoom(ShaderProgram *sp);
 };

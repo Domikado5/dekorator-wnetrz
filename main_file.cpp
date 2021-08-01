@@ -122,14 +122,6 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			{
 				(*tab[selected]).rotate(glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			}
-			if (key == GLFW_KEY_UP)
-			{
-				(*tab[selected]).rotate(glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // obraca wzgledem osi X w gore (chyba w gore XD)
-			}
-			if (key == GLFW_KEY_DOWN)
-			{
-				(*tab[selected]).rotate(glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-			}
 		}
 		if (key == GLFW_KEY_M) // wybrany tryb przesuwania
 		{
@@ -138,19 +130,19 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		if (mode == "m"){
 			if (key == GLFW_KEY_LEFT)
 			{
-				(*tab[selected]).translate(glm::vec3(-1.0f, 0.0f, 0.0f)); // przesuwa w lewo
+				(*tab[selected]).translate(glm::vec3(0.0f, 0.0f, -0.1f)); // przesuwa w lewo
 			}
 			if (key == GLFW_KEY_RIGHT)
 			{
-				(*tab[selected]).translate(glm::vec3(1.0f, 0.0f, 0.0f)); // w prawo
+				(*tab[selected]).translate(glm::vec3(0.0f, 0.0f, 0.1f)); // w prawo
 			}
 			if (key == GLFW_KEY_UP)
 			{
-				(*tab[selected]).translate(glm::vec3(0.0f, 1.0f, 0.0f));
+				(*tab[selected]).translate(glm::vec3(0.1f, 0.0f, 0.0f));
 			}
 			if (key == GLFW_KEY_DOWN)
 			{
-				(*tab[selected]).translate(glm::vec3(0.0f, 1.0f, 0.0f));
+				(*tab[selected]).translate(glm::vec3(-0.1f, 0.0f, 0.0f));
 			}
 		}
 		if (key == GLFW_KEY_S) // tryb skalowania
@@ -160,7 +152,6 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		if (mode == "s"){
 			if (key == GLFW_KEY_UP)
 			{
-				printf("skalowanie w gore\n");
 				(*tab[selected]).scale(glm::vec3(1.5f, 1.5f, 1.5f)); // zwieksza
 			}
 			if (key == GLFW_KEY_DOWN)
@@ -173,12 +164,12 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			mode = "c";
 		}
 		if (mode == "c"){
-			//if (key==GLFW_KEY_LEFT) speed_x=-PI/2;
-			//if (key==GLFW_KEY_RIGHT) speed_x=PI/2;
-			//if (key==GLFW_KEY_UP) speed_y=PI/2;
-			//if (key==GLFW_KEY_DOWN) speed_y=-PI/2;
-			//if (key==GLFW_KEY_LEFT_BRACKET) zoom-=1.0;
-			//if (key==GLFW_KEY_RIGHT_BRACKET) zoom+=1.0;
+			// if (key==GLFW_KEY_LEFT) speed_x=-PI/2;
+			// if (key==GLFW_KEY_RIGHT) speed_x=PI/2;
+			// if (key==GLFW_KEY_UP) speed_y=PI/2;
+			// if (key==GLFW_KEY_DOWN) speed_y=-PI/2;
+			if (key==GLFW_KEY_LEFT_BRACKET) {center += glm::vec3(0.0f, 0.0f, 0.5f);}
+			if (key==GLFW_KEY_RIGHT_BRACKET) {center += glm::vec3(0.0f, 0.0f, -0.5f);}
 			if (key == GLFW_KEY_LEFT) {center += glm::vec3(-0.5f, 0.0f, 0.0f);}
 			if (key==GLFW_KEY_RIGHT) {center += glm::vec3(0.5f, 0.0f, 0.0f);}
 			if (key==GLFW_KEY_UP) {center += glm::vec3(0.0f, 0.5f, 0.0f);}
@@ -258,11 +249,11 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y) {
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//glm::mat4 V=glm::lookAt(
-         //glm::vec3(0, 0, zoom),
-         //glm::vec3(0,0,0),
-         //glm::vec3(0.0f,1.0f,0.0f)); //Wylicz macierz widoku
-	glm::mat4 V = glm::lookAt(eye, center, up);
+	glm::mat4 V=glm::lookAt(
+         glm::vec3(-5.0, 4.5, 0.0),
+         glm::vec3(0.0f, 0.5f, 0.0f),
+         glm::vec3(0.0f,1.0f,0.0f)); //Wylicz macierz widoku
+	// glm::mat4 V = glm::lookAt(glm::vec3(0, 0, zoom), center, glm::vec3(0.0f,1.0f,0.0f));
 
     glm::mat4 P=glm::perspective(50.0f*PI/180.0f, aspectRatio, 0.01f, 50.0f); //Wylicz macierz rzutowania
 
@@ -279,8 +270,7 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y) {
     glUniformMatrix4fv(sp->u("V"),1,false,glm::value_ptr(V));
     glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M));
 
-	room.drawFloor(sp);
-	room.drawWalls(sp);
+	room.drawRoom(sp);
 	chair.drawModel(sp);
 
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
