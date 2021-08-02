@@ -34,6 +34,7 @@ void Furniture::loadModel()
 Furniture::Furniture(std::string obj, GLuint tex)
 {
 	this->M = glm::mat4(1.0f);
+	this->M_rotate = glm::mat4(1.0f);
 	objPath = obj;
 	texture = tex;
 	this->loadModel();
@@ -41,7 +42,7 @@ Furniture::Furniture(std::string obj, GLuint tex)
 
 void Furniture::rotate(float angle, glm::vec3 axis)
 {
-	this->M = glm::rotate(this->M, angle, axis);
+	this->M_rotate = glm::rotate(this->M_rotate, angle, axis);
 }
 
 void Furniture::scale(glm::vec3 vec)
@@ -58,7 +59,7 @@ void Furniture::drawModel(ShaderProgram *sp)
 {
 	sp->use();
 
-	glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M));
+	glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M*M_rotate));
 
 	glEnableVertexAttribArray(sp->a("vertex"));
 	glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, vertices.data());

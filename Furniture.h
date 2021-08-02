@@ -15,6 +15,7 @@
 class Furniture {
 public:
 	glm::mat4 M; // macierz modelu
+	glm::mat4 M_rotate;
 	std::string objPath; // sciezka do obj
 	GLuint texture; // tekstura
 	std::vector<glm::vec4> vertices; // tablica wierzcholkow
