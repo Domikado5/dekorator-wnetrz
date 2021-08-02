@@ -75,6 +75,7 @@ glm::vec3 up = { 0.0f, 1.0f, 0.0f }, eye = { 0.0f, 0.0f, 0.0f }, center = { 0.0f
 
 GLuint tex0;
 GLuint tex1;
+GLuint tex_chair;
 GLuint tex_floor;
 GLuint tex_walls;
 
@@ -226,12 +227,13 @@ void initOpenGLProgram(GLFWwindow* window) {
 	sp=new ShaderProgram("v_simplest.glsl",NULL,"f_simplest.glsl");
 	tex0 = readTexture("bricks.png");
 	tex1 = readTexture("sky.png");
+	tex_chair = readTexture("textures/chair.png");
 	tex_floor = readTexture("textures/floor_wooden.png");
 	tex_walls = readTexture("textures/walls_old.png");
 
 	room = Room("models/floor.obj", tex_floor, "models/walls.obj", tex_walls);
 
-	chair = Furniture("models/chair.obj", tex0);
+	chair = Furniture("models/chair.obj", tex_chair);
 	tab = {&chair};
 }
 
