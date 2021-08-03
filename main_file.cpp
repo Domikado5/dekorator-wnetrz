@@ -46,8 +46,13 @@ float speed_y=0;
 float aspectRatio=1;
 float radius = 10.0f;
 float fov = 50.0f;
+// zmienne do obracania osią
 float cam_rot_speed_x = 0;
+float cam_rot_speed_y = 0;
 float cam_rot_speed_z = 0;
+// zmienne to poruszania kamerą
+float cam_speed_x = 0;
+float cam_speed_y = 0;
 
 ShaderProgram *sp;
 
@@ -117,11 +122,11 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 				(*tab[selected]).rotate(glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			}
 		}
-		if (key == GLFW_KEY_M) // wybrany tryb przesuwania
+		if (key == GLFW_KEY_T) // wybrany tryb przesuwania
 		{
-			mode = "m";
+			mode = "t";
 		}
-		if (mode == "m"){
+		if (mode == "t"){
 			if (key == GLFW_KEY_LEFT)
 			{
 				(*tab[selected]).translate(glm::vec3(-1.0f, 0.0f, 0.0f)); // przesuwa w lewo
@@ -139,11 +144,11 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 				(*tab[selected]).translate(glm::vec3(0.0f, 1.0f, 0.0f));
 			}
 		}
-		if (key == GLFW_KEY_S) // tryb skalowania
+		if (key == GLFW_KEY_Y) // tryb skalowania
 		{
-			mode = "s";
+			mode = "y";
 		}
-		if (mode == "s"){
+		if (mode == "y"){
 			if (key == GLFW_KEY_UP)
 			{
 				printf("skalowanie w gore\n");
@@ -159,15 +164,39 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			mode = "c";
 		}
 		if (mode == "c"){
-			if (key == GLFW_KEY_4) // jak nie bedzie dzialac to zmienic na GLFW_KEY_KP_4 (chodzi o sterowanie za pomoca numpada)
+			if (key == GLFW_KEY_LEFT) // jak nie bedzie dzialac to zmienic na GLFW_KEY_KP_4 (chodzi o sterowanie za pomoca numpada)
 			{
 				cam_rot_speed_x = -PI;
 				cam_rot_speed_z = -PI;
 			}
-			if (key == GLFW_KEY_6)
+			if (key == GLFW_KEY_RIGHT)
 			{
 				cam_rot_speed_x = PI;
 				cam_rot_speed_z = PI;
+			}
+			if (key == GLFW_KEY_UP)
+			{
+				cam_rot_speed_y = PI;
+			}
+			if (key == GLFW_KEY_DOWN)
+			{
+				cam_rot_speed_y = -PI;
+			}
+			if (key == GLFW_KEY_W)
+			{
+				cam_speed_y = 5.0f;
+			}
+			if (key == GLFW_KEY_S)
+			{
+				cam_speed_y = -5.0f;
+			}
+			if (key == GLFW_KEY_A)
+			{
+				cam_speed_x = -5.0f;
+			}
+			if (key == GLFW_KEY_D)
+			{
+				cam_speed_x = 5.0f;
 			}
 			if (key == GLFW_KEY_Z)
 			{
@@ -181,14 +210,22 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 	}
 
 	if (action==GLFW_RELEASE) {
-       if (key==GLFW_KEY_LEFT) speed_x=0;
-       if (key==GLFW_KEY_RIGHT) speed_x=0;
-       if (key==GLFW_KEY_UP) speed_y=0;
-       if (key==GLFW_KEY_DOWN) speed_y=0;
-	   if (key == GLFW_KEY_4 || key == GLFW_KEY_6)
+	   if (key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT)
 	   {
 		   cam_rot_speed_x = 0;
 		   cam_rot_speed_z = 0;
+	   }
+	   if (key == GLFW_KEY_UP || key == GLFW_KEY_DOWN)
+	   {
+		   cam_rot_speed_y = 0;
+	   }
+	   if (key == GLFW_KEY_W || key == GLFW_KEY_S)
+	   {
+		   cam_speed_y = 0;
+	   }
+	   if (key == GLFW_KEY_A || key == GLFW_KEY_D)
+	   {
+		   cam_speed_x = 0;
 	   }
     }
 }
@@ -253,13 +290,14 @@ void freeOpenGLProgram(GLFWwindow* window) {
 
 
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window,float cam_angle_x, float cam_angle_z) {
+void drawScene(GLFWwindow* window,float cam_angle_x, float cam_angle_y, float cam_angle_z, float cam_pos_x, float cam_pos_y) {
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	float cam_x = sin(cam_angle_x) * radius;
+	float cam_y = sin(cam_angle_y) * radius;
 	float cam_z = cos(cam_angle_z) * radius;
 
-	glm::mat4 V = glm::lookAt(glm::vec3(cam_x, 0.0f, cam_z), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 V = glm::lookAt(glm::vec3(cam_x, cam_y, cam_z), glm::vec3(cam_pos_x, cam_pos_y, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
     glm::mat4 P = glm::perspective(glm::radians(fov), aspectRatio, 1.0f, 50.0f); //Wylicz macierz rzutowania
 
@@ -311,16 +349,23 @@ int main(void)
 	initOpenGLProgram(window); //Operacje inicjujące
 
 	//Główna pętla
-	float cam_angle_x = 0;
-	float cam_angle_z = 0;
+	float cam_angle_x = 4.7f;
+	float cam_angle_y = 0.5f;
+	float cam_angle_z = 4.7f;
+	float cam_pos_x = 0;
+	float cam_pos_y = 0;
 	glfwSetTime(0); //Zeruj timer
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
 		double time = glfwGetTime();
 		cam_angle_x += cam_rot_speed_x * time;
+		cam_angle_y += cam_rot_speed_y * time;
 		cam_angle_z += cam_rot_speed_z * time;
+		cam_pos_x += cam_speed_x * time;
+		cam_pos_y += cam_speed_y * time;
+		cam_pos_y = std::max(0.0f, cam_pos_y);
         glfwSetTime(0); //Zeruj timer
-		drawScene(window, cam_angle_x, cam_angle_z); //Wykonaj procedurę rysującą
+		drawScene(window, cam_angle_x, cam_angle_y, cam_angle_z, cam_pos_x, cam_pos_y); //Wykonaj procedurę rysującą
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
 	}
 
