@@ -20,7 +20,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_SWIZZLE
 
-#include <GL/glew.h>
+#include <glew/include/GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -44,25 +44,12 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 float speed_x=0;
 float speed_y=0;
 float aspectRatio=1;
-float zoom=-5.5;
+float radius = 10.0f;
+float fov = 50.0f;
+float cam_rot_speed_x = 0;
+float cam_rot_speed_z = 0;
 
 ShaderProgram *sp;
-
-
-//Odkomentuj, żeby rysować kostkę
-//float* vertices = myCubeVertices;
-//float* normals = myCubeNormals;
-//float* texCoords = myCubeTexCoords;
-//float* colors = myCubeColors;
-//int vertexCount = myCubeVertexCount;
-
-
-//Odkomentuj, żeby rysować czajnik
-// float* vertices = myTeapotVertices;
-// float* normals = myTeapotVertexNormals;
-// float* texCoords = myTeapotTexCoords;
-// float* colors = myTeapotColors;
-// int vertexCount = myTeapotVertexCount;
 
 std::vector<glm::vec4> vertices;
 std::vector<glm::vec4> normals;
@@ -71,11 +58,9 @@ std::vector<glm::vec4> colors;
 std::vector<unsigned int> indices;
 int vertexCount;
 int selected = 0;
-glm::vec3 up = { 0.0f, 1.0f, 0.0f }, eye = { 0.0f, 0.0f, 0.0f }, center = { 0.0f, 0.0f, 0.0f };
 
 GLuint tex0;
 GLuint tex1;
-GLuint tex_chair;
 GLuint tex_floor;
 GLuint tex_walls;
 
@@ -123,6 +108,14 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			{
 				(*tab[selected]).rotate(glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			}
+			if (key == GLFW_KEY_UP)
+			{
+				(*tab[selected]).rotate(glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // obraca wzgledem osi X w gore (chyba w gore XD)
+			}
+			if (key == GLFW_KEY_DOWN)
+			{
+				(*tab[selected]).rotate(glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+			}
 		}
 		if (key == GLFW_KEY_M) // wybrany tryb przesuwania
 		{
@@ -131,19 +124,19 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		if (mode == "m"){
 			if (key == GLFW_KEY_LEFT)
 			{
-				(*tab[selected]).translate(glm::vec3(0.0f, 0.0f, -0.1f)); // przesuwa w lewo
+				(*tab[selected]).translate(glm::vec3(-1.0f, 0.0f, 0.0f)); // przesuwa w lewo
 			}
 			if (key == GLFW_KEY_RIGHT)
 			{
-				(*tab[selected]).translate(glm::vec3(0.0f, 0.0f, 0.1f)); // w prawo
+				(*tab[selected]).translate(glm::vec3(1.0f, 0.0f, 0.0f)); // w prawo
 			}
 			if (key == GLFW_KEY_UP)
 			{
-				(*tab[selected]).translate(glm::vec3(0.1f, 0.0f, 0.0f));
+				(*tab[selected]).translate(glm::vec3(0.0f, 1.0f, 0.0f));
 			}
 			if (key == GLFW_KEY_DOWN)
 			{
-				(*tab[selected]).translate(glm::vec3(-0.1f, 0.0f, 0.0f));
+				(*tab[selected]).translate(glm::vec3(0.0f, 1.0f, 0.0f));
 			}
 		}
 		if (key == GLFW_KEY_S) // tryb skalowania
@@ -153,6 +146,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		if (mode == "s"){
 			if (key == GLFW_KEY_UP)
 			{
+				printf("skalowanie w gore\n");
 				(*tab[selected]).scale(glm::vec3(1.5f, 1.5f, 1.5f)); // zwieksza
 			}
 			if (key == GLFW_KEY_DOWN)
@@ -165,16 +159,24 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			mode = "c";
 		}
 		if (mode == "c"){
-			// if (key==GLFW_KEY_LEFT) speed_x=-PI/2;
-			// if (key==GLFW_KEY_RIGHT) speed_x=PI/2;
-			// if (key==GLFW_KEY_UP) speed_y=PI/2;
-			// if (key==GLFW_KEY_DOWN) speed_y=-PI/2;
-			if (key==GLFW_KEY_LEFT_BRACKET) {center += glm::vec3(0.0f, 0.0f, 0.5f);}
-			if (key==GLFW_KEY_RIGHT_BRACKET) {center += glm::vec3(0.0f, 0.0f, -0.5f);}
-			if (key == GLFW_KEY_LEFT) {center += glm::vec3(-0.5f, 0.0f, 0.0f);}
-			if (key==GLFW_KEY_RIGHT) {center += glm::vec3(0.5f, 0.0f, 0.0f);}
-			if (key==GLFW_KEY_UP) {center += glm::vec3(0.0f, 0.5f, 0.0f);}
-			if (key==GLFW_KEY_DOWN) {center += glm::vec3(0.0f, -0.5f, 0.0f);}
+			if (key == GLFW_KEY_4) // jak nie bedzie dzialac to zmienic na GLFW_KEY_KP_4 (chodzi o sterowanie za pomoca numpada)
+			{
+				cam_rot_speed_x = -PI;
+				cam_rot_speed_z = -PI;
+			}
+			if (key == GLFW_KEY_6)
+			{
+				cam_rot_speed_x = PI;
+				cam_rot_speed_z = PI;
+			}
+			if (key == GLFW_KEY_Z)
+			{
+				if (fov >= 5.0f) {fov -= 5.0f;}
+			}
+			if (key == GLFW_KEY_X)
+			{
+				if (fov <= 45.0f) {fov += 5.0f;}
+			}
 		}
 	}
 
@@ -183,6 +185,11 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
        if (key==GLFW_KEY_RIGHT) speed_x=0;
        if (key==GLFW_KEY_UP) speed_y=0;
        if (key==GLFW_KEY_DOWN) speed_y=0;
+	   if (key == GLFW_KEY_4 || key == GLFW_KEY_6)
+	   {
+		   cam_rot_speed_x = 0;
+		   cam_rot_speed_z = 0;
+	   }
     }
 }
 
@@ -227,13 +234,12 @@ void initOpenGLProgram(GLFWwindow* window) {
 	sp=new ShaderProgram("v_simplest.glsl",NULL,"f_simplest.glsl");
 	tex0 = readTexture("bricks.png");
 	tex1 = readTexture("sky.png");
-	tex_chair = readTexture("textures/chair.png");
 	tex_floor = readTexture("textures/floor_wooden.png");
 	tex_walls = readTexture("textures/walls_old.png");
 
 	room = Room("models/floor.obj", tex_floor, "models/walls.obj", tex_walls);
 
-	chair = Furniture("models/chair.obj", tex_chair);
+	chair = Furniture("models/chair.obj", tex0);
 	tab = {&chair};
 }
 
@@ -247,23 +253,17 @@ void freeOpenGLProgram(GLFWwindow* window) {
 
 
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window,float angle_x,float angle_y) {
+void drawScene(GLFWwindow* window,float cam_angle_x, float cam_angle_z) {
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	float cam_x = sin(cam_angle_x) * radius;
+	float cam_z = cos(cam_angle_z) * radius;
 
-	glm::mat4 V=glm::lookAt(
-         glm::vec3(-5.0, 4.5, 0.0),
-         glm::vec3(0.0f, 0.5f, 0.0f),
-         glm::vec3(0.0f,1.0f,0.0f)); //Wylicz macierz widoku
-	// glm::mat4 V = glm::lookAt(glm::vec3(0, 0, zoom), center, glm::vec3(0.0f,1.0f,0.0f));
+	glm::mat4 V = glm::lookAt(glm::vec3(cam_x, 0.0f, cam_z), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-    glm::mat4 P=glm::perspective(50.0f*PI/180.0f, aspectRatio, 0.01f, 50.0f); //Wylicz macierz rzutowania
+    glm::mat4 P = glm::perspective(glm::radians(fov), aspectRatio, 1.0f, 50.0f); //Wylicz macierz rzutowania
 
-	glm::mat4 M=glm::mat4(1.0f);
-	
-	// M=glm::scale(M, glm::vec3(0.5f, 0.5f, 0.5f));
-	// M=glm::rotate(M,angle_y,glm::vec3(1.0f,0.0f,0.0f)); //Wylicz macierz modelu
-	// M=glm::rotate(M,angle_x,glm::vec3(0.0f,1.0f,0.0f)); //Wylicz macierz modelu
+	glm::mat4 M = glm::mat4(1.0f);
 
     sp->use();//Aktywacja programu cieniującego
     //Przeslij parametry programu cieniującego do karty graficznej
@@ -272,7 +272,8 @@ void drawScene(GLFWwindow* window,float angle_x,float angle_y) {
     glUniformMatrix4fv(sp->u("V"),1,false,glm::value_ptr(V));
     glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M));
 
-	room.drawRoom(sp);
+	room.drawFloor(sp);
+	room.drawWalls(sp);
 	chair.drawModel(sp);
 
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
@@ -310,15 +311,16 @@ int main(void)
 	initOpenGLProgram(window); //Operacje inicjujące
 
 	//Główna pętla
-	float angle_x=0; //Aktualny kąt obrotu obiektu
-	float angle_y=0; //Aktualny kąt obrotu obiektu
+	float cam_angle_x = 0;
+	float cam_angle_z = 0;
 	glfwSetTime(0); //Zeruj timer
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
-        angle_x+=speed_x*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
-        angle_y+=speed_y*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
+		double time = glfwGetTime();
+		cam_angle_x += cam_rot_speed_x * time;
+		cam_angle_z += cam_rot_speed_z * time;
         glfwSetTime(0); //Zeruj timer
-		drawScene(window,angle_x,angle_y); //Wykonaj procedurę rysującą
+		drawScene(window, cam_angle_x, cam_angle_z); //Wykonaj procedurę rysującą
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
 	}
 
