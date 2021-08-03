@@ -294,7 +294,7 @@ void drawScene(GLFWwindow* window,float cam_angle_x, float cam_angle_y, float ca
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	float cam_x = sin(cam_angle_x) * radius;
-	float cam_y = sin(cam_angle_y) * radius;
+	float cam_y = cam_angle_y * radius;
 	float cam_z = cos(cam_angle_z) * radius;
 
 	glm::mat4 V = glm::lookAt(glm::vec3(cam_x, cam_y, cam_z), glm::vec3(cam_pos_x, cam_pos_y, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -360,6 +360,8 @@ int main(void)
 		double time = glfwGetTime();
 		cam_angle_x += cam_rot_speed_x * time;
 		cam_angle_y += cam_rot_speed_y * time;
+		cam_angle_y = std::max(0.0f, cam_angle_y);
+		cam_angle_y = std::min(1.5f, cam_angle_y);
 		cam_angle_z += cam_rot_speed_z * time;
 		cam_pos_x += cam_speed_x * time;
 		cam_pos_y += cam_speed_y * time;
