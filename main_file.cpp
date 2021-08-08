@@ -129,19 +129,27 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		if (mode == "t"){
 			if (key == GLFW_KEY_LEFT)
 			{
-				(*tab[selected]).translate(glm::vec3(-1.0f, 0.0f, 0.0f)); // przesuwa w lewo
+				(*tab[selected]).translate(glm::vec3(0.0f, 0.0f, -0.1f)); // przesuwa w lewo
 			}
 			if (key == GLFW_KEY_RIGHT)
 			{
-				(*tab[selected]).translate(glm::vec3(1.0f, 0.0f, 0.0f)); // w prawo
+				(*tab[selected]).translate(glm::vec3(0.0f, 0.0f, 0.1)); // w prawo
 			}
 			if (key == GLFW_KEY_UP)
 			{
-				(*tab[selected]).translate(glm::vec3(0.0f, 1.0f, 0.0f));
+				(*tab[selected]).translate(glm::vec3(0.1f, 0.0f, 0.0f));
 			}
 			if (key == GLFW_KEY_DOWN)
 			{
-				(*tab[selected]).translate(glm::vec3(0.0f, 1.0f, 0.0f));
+				(*tab[selected]).translate(glm::vec3(-0.1f, 0.0f, 0.0f));
+			}
+			if (key == GLFW_KEY_Z)
+			{
+				(*tab[selected]).translate(glm::vec3(0.0f, 0.1f, 0.0f));
+			}
+			if (key == GLFW_KEY_X)
+			{
+				(*tab[selected]).translate(glm::vec3(0.0f, -0.1f, 0.0f));
 			}
 		}
 		if (key == GLFW_KEY_Y) // tryb skalowania
@@ -151,7 +159,6 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		if (mode == "y"){
 			if (key == GLFW_KEY_UP)
 			{
-				printf("skalowanie w gore\n");
 				(*tab[selected]).scale(glm::vec3(1.5f, 1.5f, 1.5f)); // zwieksza
 			}
 			if (key == GLFW_KEY_DOWN)
@@ -290,14 +297,14 @@ void freeOpenGLProgram(GLFWwindow* window) {
 
 
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window,float cam_angle_x, float cam_angle_y, float cam_angle_z, float cam_pos_x, float cam_pos_y) {
+void drawScene(GLFWwindow* window,float cam_angle_x, float cam_angle_y, float cam_angle_z, float cam_pos_z, float cam_pos_y) {
 	//************Tutaj umieszczaj kod rysujący obraz******************l
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	float cam_x = sin(cam_angle_x) * radius;
 	float cam_y = cam_angle_y * radius;
 	float cam_z = cos(cam_angle_z) * radius;
 
-	glm::mat4 V = glm::lookAt(glm::vec3(cam_x, cam_y, cam_z), glm::vec3(cam_pos_x, cam_pos_y, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 V = glm::lookAt(glm::vec3(cam_x, cam_y, cam_z), glm::vec3(0.0f, cam_pos_y, cam_pos_z), glm::vec3(0.0f, 1.0f, 0.0f));
 
     glm::mat4 P = glm::perspective(glm::radians(fov), aspectRatio, 1.0f, 50.0f); //Wylicz macierz rzutowania
 
