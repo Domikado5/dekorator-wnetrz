@@ -31,6 +31,11 @@ void Furniture::loadModel()
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 }
 
+void Furniture::setMatrices(glm::mat4 mainMatrice, glm::mat4 rotationMatrice){
+	this->M = mainMatrice;
+	this->M_rotate = rotationMatrice;
+}
+
 Furniture::Furniture(std::string obj, GLuint tex)
 {
 	this->M = glm::mat4(1.0f);

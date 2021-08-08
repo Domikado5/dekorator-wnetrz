@@ -25,6 +25,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include <stdlib.h>
 #include <stdio.h>
 #include "constants.h"
@@ -33,6 +34,8 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "myCube.h"
 #include "myTeapot.h"
 #include <vector>
+#include <iostream>
+#include <fstream>
 
 #include "Furniture.h"
 #include "Room.h"
@@ -81,6 +84,33 @@ void error_callback(int error, const char* description) {
 
 std::string mode = "c";
 
+void saveProject(std::string filePath){
+	Furniture f[tab.size()];
+	for(int i = 0; i < tab.size(); i++){
+		f[i] = (*tab[i]);
+	}
+
+	std::ofstream fstream_ob;
+	fstream_ob.open(filePath, std::ios::out);
+	fstream_ob.write((char *)&f, sizeof(f));
+	fstream_ob.close();
+	printf("Saved successfully.\n");
+}
+
+void loadProject(std::string filePath){
+	Furniture f[tab.size()];
+
+	std::ifstream ifstream_ob;
+	ifstream_ob.open(filePath, std::ios::in);
+	ifstream_ob.read((char *) &f, sizeof(f));
+	ifstream_ob.close();
+
+	for(int i=0; i < tab.size(); i++){
+		(*tab[i]).setMatrices(f[i].M, f[i].M_rotate);
+	}
+	printf("Loaded successfully.\n");
+}
+
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     //if (action==GLFW_PRESS) {
        
@@ -99,6 +129,14 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			// wybiera drugi obiekt
 			selected = 1;
 			printf("Picked furniture %d", selected);
+		}
+		if (key == GLFW_KEY_F1)
+		{
+			saveProject("saves/save1.txt");
+		}
+		if (key == GLFW_KEY_F2)
+		{
+			loadProject("saves/save1.txt");
 		}
 		if (key == GLFW_KEY_R) // wybrany tryb rotacji
 		{
@@ -266,7 +304,6 @@ GLuint readTexture(const char* filename) {
       return tex;
     }
 
-
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
 	//************Tutaj umieszczaj kod, który należy wykonać raz, na początku programu************
@@ -319,7 +356,10 @@ void drawScene(GLFWwindow* window,float cam_angle_x, float cam_angle_y, float ca
 
 	room.drawFloor(sp);
 	room.drawWalls(sp);
-	chair.drawModel(sp);
+	
+	for(int i = 0; i < tab.size(); i++){
+		(*tab[i]).drawModel(sp);
+	}
 
     glfwSwapBuffers(window); //Przerzuć tylny bufor na przedni
 }

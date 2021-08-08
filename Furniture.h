@@ -6,6 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -28,6 +29,7 @@ public:
 	Furniture(){};
 
 	void loadModel(); // ladowanie modelu
+	void setMatrices(glm::mat4, glm::mat4);
 	void translate(glm::vec3); // przesuwanie
 	void rotate(float, glm::vec3); // obracanie
 	void scale(glm::vec3); // skalowanie
