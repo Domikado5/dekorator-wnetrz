@@ -2,6 +2,7 @@
 
 uniform sampler2D textureMap0;
 //uniform sampler2D textureMap1;
+uniform int chosen;
 
 out vec4 pixelColor; //Zmienna wyjsciowa fragment shadera. Zapisuje sie do niej ostateczny (prawie) kolor piksela
 
@@ -28,5 +29,8 @@ void main(void) {
 	//Obliczenie modelu oświetlenia
 	float nl = clamp(dot(mn, ml), 0, 1);
 	float rv = pow(clamp(dot(mr, mv), 0, 1), 50);
-	pixelColor= vec4(kd.rgb * nl, kd.a) + vec4(ks.rgb*rv, 0);
+	pixelColor = vec4(kd.rgb * nl, kd.a) + vec4(ks.rgb*rv, 0);
+	if (chosen == 1){
+		pixelColor = mix(pixelColor, vec4(0.070,0.119,0.912, 1.0), 1.0);
+	}
 }

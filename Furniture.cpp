@@ -43,6 +43,7 @@ Furniture::Furniture(std::string obj, GLuint tex)
 	objPath = obj;
 	texture = tex;
 	this->loadModel();
+	this->chosen = false;
 }
 
 void Furniture::rotate(float angle, glm::vec3 axis)
@@ -75,12 +76,15 @@ void Furniture::drawModel(ShaderProgram *sp)
 	glEnableVertexAttribArray(sp->a("texCoord0"));  //Włącz przesyłanie danych do atrybutu texCoord0
 	glVertexAttribPointer(sp->a("texCoord0"), 2, GL_FLOAT, false, 0, uv.data()); //Wskaż tablicę z danymi dla atrybutu texCoord0
 
+	glUniform1i(sp->u("chosen"), int(chosen));
+
 	glUniform1i(sp->u("textureMap0"), 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
 
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
 
+	glUniform1i(sp->u("chosen"), 0);
 	glDisableVertexAttribArray(sp->a("vertex"));
 	glDisableVertexAttribArray(sp->a("normal"));
 	glDisableVertexAttribArray(sp->a("texCoord0"));

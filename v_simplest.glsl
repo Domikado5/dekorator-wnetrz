@@ -27,6 +27,6 @@ void main(void) {
     iTexCoord0 = texCoord0; 
     //iTexCoord1 = (n.xy+1)/2;   
     ic = color;
-    
+
     gl_Position=P*V*M*vertex;
 }

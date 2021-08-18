@@ -120,9 +120,18 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 
 	if (action == GLFW_PRESS)
 	{
+		if (key == GLFW_KEY_ESCAPE)
+		{	
+			if (selected >= 0)
+			(*tab[selected]).chosen = false;
+			selected = -1;
+		}
 		if (key == GLFW_KEY_TAB)
 		{
+			if (selected >= 0)
+			(*tab[selected]).chosen = false;
 			if (++selected >= tab.size()) {selected = 0;}
+			(*tab[selected]).chosen = true;
 		}
 		if (key == GLFW_KEY_F1)
 		{
@@ -139,18 +148,22 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		if (mode == "r"){
 			if (key == GLFW_KEY_LEFT)
 			{
+				if (selected >= 0)
 				(*tab[selected]).rotate(glm::radians(-30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			}
 			if (key == GLFW_KEY_RIGHT)
 			{
+				if (selected >= 0)
 				(*tab[selected]).rotate(glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			}
 			if (key == GLFW_KEY_UP)
 			{
+				if (selected >= 0)
 				(*tab[selected]).rotate(glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			}
 			if (key == GLFW_KEY_DOWN)
 			{
+				if (selected >= 0)
 				(*tab[selected]).rotate(glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			}
 		}
@@ -161,26 +174,32 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		if (mode == "t"){
 			if (key == GLFW_KEY_LEFT)
 			{
+				if (selected >= 0)
 				(*tab[selected]).translate(glm::vec3(0.0f, 0.0f, -0.1f));
 			}
 			if (key == GLFW_KEY_RIGHT)
 			{
+				if (selected >= 0)
 				(*tab[selected]).translate(glm::vec3(0.0f, 0.0f, 0.1));
 			}
 			if (key == GLFW_KEY_UP)
 			{
+				if (selected >= 0)
 				(*tab[selected]).translate(glm::vec3(0.1f, 0.0f, 0.0f));
 			}
 			if (key == GLFW_KEY_DOWN)
 			{
+				if (selected >= 0)
 				(*tab[selected]).translate(glm::vec3(-0.1f, 0.0f, 0.0f));
 			}
 			if (key == GLFW_KEY_Z)
 			{
+				if (selected >= 0)
 				(*tab[selected]).translate(glm::vec3(0.0f, 0.1f, 0.0f));
 			}
 			if (key == GLFW_KEY_X)
 			{
+				if (selected >= 0)
 				(*tab[selected]).translate(glm::vec3(0.0f, -0.1f, 0.0f));
 			}
 		}
@@ -191,10 +210,12 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		if (mode == "y"){
 			if (key == GLFW_KEY_UP)
 			{
+				if (selected >= 0)
 				(*tab[selected]).scale(glm::vec3(1.5f, 1.5f, 1.5f));
 			}
 			if (key == GLFW_KEY_DOWN)
 			{
+				if (selected >= 0)
 				(*tab[selected]).scale(glm::vec3(0.5f, 0.5f, 0.5f));
 			}
 		}

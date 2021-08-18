@@ -23,6 +23,7 @@ public:
 	std::vector<glm::vec4> normals;
 	std::vector<glm::vec2> uv; // UV mapping (texture coordinates)
 	std::vector<unsigned int> indices;
+	bool chosen;
 
 	Furniture(std::string, GLuint); // konstruktor
 
