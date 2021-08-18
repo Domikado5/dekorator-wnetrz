@@ -32,8 +32,8 @@ void Furniture::loadModel()
 }
 
 void Furniture::setMatrices(glm::mat4 mainMatrice, glm::mat4 rotationMatrice){
-	this->M = mainMatrice;
-	this->M_rotate = rotationMatrice;
+	this->M = glm::make_mat4((const float*)glm::value_ptr(mainMatrice));
+	this->M_rotate = glm::make_mat4((const float*)glm::value_ptr(rotationMatrice));
 }
 
 Furniture::Furniture(std::string obj, GLuint tex)

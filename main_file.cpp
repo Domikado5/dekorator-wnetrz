@@ -44,6 +44,8 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#define MAX_OBJECTS 20
+
 float speed_x=0;
 float speed_y=0;
 float aspectRatio=1;
@@ -84,8 +86,9 @@ void error_callback(int error, const char* description) {
 
 std::string mode = "c";
 
-void saveProject(std::string filePath){
-	Furniture f[tab.size()];
+Furniture f[MAX_OBJECTS];
+
+void saveProject(std::string filePath){ // save project progress to file
 	for(int i = 0; i < tab.size(); i++){
 		f[i] = (*tab[i]);
 	}
@@ -97,16 +100,18 @@ void saveProject(std::string filePath){
 	printf("Saved successfully.\n");
 }
 
-void loadProject(std::string filePath){
-	Furniture f[tab.size()];
-
+void loadProject(std::string filePath){ // load project from save file
 	std::ifstream ifstream_ob;
 	ifstream_ob.open(filePath, std::ios::in);
 	ifstream_ob.read((char *) &f, sizeof(f));
 	ifstream_ob.close();
 
+
+	// const float *fSource;
 	for(int i=0; i < tab.size(); i++){
-		(*tab[i]).setMatrices(f[i].M, f[i].M_rotate);
+		// fSource = (const float*)glm::value_ptr(f[i].M);
+		(*tab[i]).M = f[i].M;
+		(*tab[i]).M_rotate = f[i].M_rotate;
 	}
 	printf("Loaded successfully.\n");
 }
