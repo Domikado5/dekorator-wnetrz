@@ -55,7 +55,7 @@ float fov = 50.0f;
 float cam_rot_speed_x = 0;
 float cam_rot_speed_y = 0;
 float cam_rot_speed_z = 0;
-// zmienne to poruszania kamerą
+// zmienne do poruszania kamerą
 float cam_speed_x = 0;
 float cam_speed_y = 0;
 
@@ -116,24 +116,13 @@ void loadProject(std::string filePath){ // load project from save file
 	printf("Loaded successfully.\n");
 }
 
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    //if (action==GLFW_PRESS) {
-       
-    //}
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) { // this function handles key presses
 
 	if (action == GLFW_PRESS)
 	{
-		if ((mods & GLFW_MOD_ALT != 0) && (key == GLFW_KEY_0)) 
+		if (key == GLFW_KEY_TAB)
 		{
-			// wybiera pierwszy obiekt (ustawia jakas zmienna selected na 0, ktora defiiowalaby ktory obiekt jest wybrany)
-			selected = 0;
-			printf("Picked furniture %d", selected);
-		}
-		if ((mods & GLFW_MOD_ALT != 0) && (key == GLFW_KEY_1))
-		{
-			// wybiera drugi obiekt
-			selected = 1;
-			printf("Picked furniture %d", selected);
+			if (++selected >= tab.size()) {selected = 0;}
 		}
 		if (key == GLFW_KEY_F1)
 		{
@@ -143,14 +132,14 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		{
 			loadProject("saves/save1.txt");
 		}
-		if (key == GLFW_KEY_R) // wybrany tryb rotacji
+		if (key == GLFW_KEY_R) // rotation
 		{
 			mode = "r";
 		}
 		if (mode == "r"){
 			if (key == GLFW_KEY_LEFT)
 			{
-				(*tab[selected]).rotate(glm::radians(-30.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // obraca wzgledem osi Y w lewo (chyba w lewo XD)
+				(*tab[selected]).rotate(glm::radians(-30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			}
 			if (key == GLFW_KEY_RIGHT)
 			{
@@ -158,25 +147,25 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			}
 			if (key == GLFW_KEY_UP)
 			{
-				(*tab[selected]).rotate(glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // obraca wzgledem osi X w gore (chyba w gore XD)
+				(*tab[selected]).rotate(glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			}
 			if (key == GLFW_KEY_DOWN)
 			{
 				(*tab[selected]).rotate(glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			}
 		}
-		if (key == GLFW_KEY_T) // wybrany tryb przesuwania
+		if (key == GLFW_KEY_T) // translation
 		{
 			mode = "t";
 		}
 		if (mode == "t"){
 			if (key == GLFW_KEY_LEFT)
 			{
-				(*tab[selected]).translate(glm::vec3(0.0f, 0.0f, -0.1f)); // przesuwa w lewo
+				(*tab[selected]).translate(glm::vec3(0.0f, 0.0f, -0.1f));
 			}
 			if (key == GLFW_KEY_RIGHT)
 			{
-				(*tab[selected]).translate(glm::vec3(0.0f, 0.0f, 0.1)); // w prawo
+				(*tab[selected]).translate(glm::vec3(0.0f, 0.0f, 0.1));
 			}
 			if (key == GLFW_KEY_UP)
 			{
@@ -195,26 +184,26 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 				(*tab[selected]).translate(glm::vec3(0.0f, -0.1f, 0.0f));
 			}
 		}
-		if (key == GLFW_KEY_Y) // tryb skalowania
+		if (key == GLFW_KEY_Y) // scaling
 		{
 			mode = "y";
 		}
 		if (mode == "y"){
 			if (key == GLFW_KEY_UP)
 			{
-				(*tab[selected]).scale(glm::vec3(1.5f, 1.5f, 1.5f)); // zwieksza
+				(*tab[selected]).scale(glm::vec3(1.5f, 1.5f, 1.5f));
 			}
 			if (key == GLFW_KEY_DOWN)
 			{
 				(*tab[selected]).scale(glm::vec3(0.5f, 0.5f, 0.5f));
 			}
 		}
-		if (key == GLFW_KEY_C) // tryb skalowania
+		if (key == GLFW_KEY_C) // camera
 		{
 			mode = "c";
 		}
 		if (mode == "c"){
-			if (key == GLFW_KEY_LEFT) // jak nie bedzie dzialac to zmienic na GLFW_KEY_KP_4 (chodzi o sterowanie za pomoca numpada)
+			if (key == GLFW_KEY_LEFT)
 			{
 				cam_rot_speed_x = -PI;
 				cam_rot_speed_z = -PI;
@@ -354,7 +343,6 @@ void drawScene(GLFWwindow* window,float cam_angle_x, float cam_angle_y, float ca
 
     sp->use();//Aktywacja programu cieniującego
     //Przeslij parametry programu cieniującego do karty graficznej
-	// Nwm czy to ponizej tez zakomentowac
     glUniformMatrix4fv(sp->u("P"),1,false,glm::value_ptr(P));
     glUniformMatrix4fv(sp->u("V"),1,false,glm::value_ptr(V));
     glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M));
