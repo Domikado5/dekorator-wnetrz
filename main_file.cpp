@@ -279,6 +279,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 					cam_angle_z = 4.7f;
 					cam_pos_x = 0;
 					cam_pos_y = 0;
+					fov = 50.0f;
 			}
 		}
 	}
