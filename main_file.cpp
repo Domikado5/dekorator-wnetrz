@@ -58,6 +58,12 @@ float cam_rot_speed_z = 0;
 // zmienne do poruszania kamerą
 float cam_speed_x = 0;
 float cam_speed_y = 0;
+// zmienne polozenia kamery
+float cam_angle_x = 4.7f;
+float cam_angle_y = 0.5f;
+float cam_angle_z = 4.7f;
+float cam_pos_x = 0;
+float cam_pos_y = 0;
 
 ShaderProgram *sp;
 
@@ -266,6 +272,14 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			{
 				if (fov <= 45.0f) {fov += 5.0f;}
 			}
+			if (key == GLFW_KEY_SPACE) // resets camera settings
+			{
+					cam_angle_x = 4.7f;
+					cam_angle_y = 0.5f;
+					cam_angle_z = 4.7f;
+					cam_pos_x = 0;
+					cam_pos_y = 0;
+			}
 		}
 	}
 
@@ -410,11 +424,6 @@ int main(void)
 	initOpenGLProgram(window); //Operacje inicjujące
 
 	//Główna pętla
-	float cam_angle_x = 4.7f;
-	float cam_angle_y = 0.5f;
-	float cam_angle_z = 4.7f;
-	float cam_pos_x = 0;
-	float cam_pos_y = 0;
 	glfwSetTime(0); //Zeruj timer
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
