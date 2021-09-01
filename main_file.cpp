@@ -79,8 +79,11 @@ GLuint tex0;
 GLuint tex1;
 GLuint tex_floor;
 GLuint tex_walls;
+GLuint tex_chair;
+GLuint tex_patio;
 
 Furniture chair;
+Furniture patio;
 std::vector<Furniture *> tab;
 
 Room room;
@@ -347,11 +350,14 @@ void initOpenGLProgram(GLFWwindow* window) {
 	tex1 = readTexture("sky.png");
 	tex_floor = readTexture("textures/floor_wooden.png");
 	tex_walls = readTexture("textures/walls_old.png");
+	tex_chair = readTexture("textures/chair.png");
+	tex_patio = readTexture("textures/patio_wood.png");
 
 	room = Room("models/floor.obj", tex_floor, "models/walls.obj", tex_walls);
 
-	chair = Furniture("models/chair.obj", tex0);
-	tab = {&chair};
+	chair = Furniture("models/chair.obj", tex_chair);
+	patio = Furniture("models/patio.obj", tex0);
+	tab = {&chair, &patio};
 }
 
 
