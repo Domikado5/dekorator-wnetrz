@@ -72,7 +72,7 @@ Room::Room(std::string floor, GLuint floor_tex, GLuint floor_spec, std::string w
 	this->loadModel();
 }
 
-void Room::drawFloor(ShaderProgram *sp)
+void Room::drawFloor(ShaderProgram *sp) // rysowanie podłogi
 {
 	sp->use();
 
@@ -105,7 +105,7 @@ void Room::drawFloor(ShaderProgram *sp)
 	glDisableVertexAttribArray(sp->a("texCoord0"));
 }
 
-void Room::drawWalls(ShaderProgram *sp)
+void Room::drawWalls(ShaderProgram *sp) // rysowanie ścian
 {
 	sp->use();
 

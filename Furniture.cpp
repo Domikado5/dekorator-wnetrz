@@ -31,12 +31,7 @@ void Furniture::loadModel()
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 }
 
-void Furniture::setMatrices(glm::mat4 mainMatrice, glm::mat4 rotationMatrice){
-	this->M = glm::make_mat4((const float*)glm::value_ptr(mainMatrice));
-	this->M_rotate = glm::make_mat4((const float*)glm::value_ptr(rotationMatrice));
-}
-
-Furniture::Furniture(std::string obj, GLuint tex)
+Furniture::Furniture(std::string obj, GLuint tex) // konstruktor
 {
 	this->M = glm::mat4(1.0f);
 	this->M_rotate = glm::mat4(1.0f);
@@ -46,26 +41,26 @@ Furniture::Furniture(std::string obj, GLuint tex)
 	this->chosen = false;
 }
 
-void Furniture::rotate(float angle, glm::vec3 axis)
+void Furniture::rotate(float angle, glm::vec3 axis) // obracanie modelu
 {
 	this->M_rotate = glm::rotate(this->M_rotate, angle, axis);
 }
 
-void Furniture::scale(glm::vec3 vec)
+void Furniture::scale(glm::vec3 vec) // skalowanie modelu
 {
 	this->M = glm::scale(this->M, vec);
 }
 
-void Furniture::translate(glm::vec3 vec)
+void Furniture::translate(glm::vec3 vec) // przesuwanie modelu
 {
 	this->M = glm::translate(this->M, vec);
 }
 
-void Furniture::drawModel(ShaderProgram *sp)
+void Furniture::drawModel(ShaderProgram *sp) // rysowanie modelu
 {
 	sp->use();
 
-	glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M*M_rotate));
+	glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M*M_rotate)); // załadowanie macierzy modelu
 
 	glEnableVertexAttribArray(sp->a("vertex"));
 	glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, vertices.data());
@@ -76,7 +71,7 @@ void Furniture::drawModel(ShaderProgram *sp)
 	glEnableVertexAttribArray(sp->a("texCoord0"));  //Włącz przesyłanie danych do atrybutu texCoord0
 	glVertexAttribPointer(sp->a("texCoord0"), 2, GL_FLOAT, false, 0, uv.data()); //Wskaż tablicę z danymi dla atrybutu texCoord0
 
-	glUniform1i(sp->u("chosen"), int(chosen));
+	glUniform1i(sp->u("chosen"), int(chosen)); // Ustawienie zmiennej chosen aby podswietlic model (jesli został wybrany)
 
 	glUniform1i(sp->u("textureMap0"), 0);
 	glActiveTexture(GL_TEXTURE0);
@@ -84,7 +79,7 @@ void Furniture::drawModel(ShaderProgram *sp)
 
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, indices.data());
 
-	glUniform1i(sp->u("chosen"), 0);
+	glUniform1i(sp->u("chosen"), 0); // Ustawienie zmiennej chosen na 0
 	glDisableVertexAttribArray(sp->a("vertex"));
 	glDisableVertexAttribArray(sp->a("normal"));
 	glDisableVertexAttribArray(sp->a("texCoord0"));

@@ -97,9 +97,9 @@ void error_callback(int error, const char* description) {
 
 std::string mode = "c";
 
-Furniture f[MAX_OBJECTS];
+Furniture f[MAX_OBJECTS]; // tablica kopiująca z/do pliku
 
-void saveProject(std::string filePath){ // save project progress to file
+void saveProject(std::string filePath){ // Zapisywanie projektu do pliku
 	for(int i = 0; i < tab.size(); i++){
 		f[i] = (*tab[i]);
 	}
@@ -111,84 +111,81 @@ void saveProject(std::string filePath){ // save project progress to file
 	printf("Saved successfully.\n");
 }
 
-void loadProject(std::string filePath){ // load project from save file
+void loadProject(std::string filePath){ // Wczytywanie projektu z pliku
 	std::ifstream ifstream_ob;
 	ifstream_ob.open(filePath, std::ios::in);
 	ifstream_ob.read((char *) &f, sizeof(f));
 	ifstream_ob.close();
 
-
-	// const float *fSource;
 	for(int i=0; i < tab.size(); i++){
-		// fSource = (const float*)glm::value_ptr(f[i].M);
 		(*tab[i]).M = f[i].M;
 		(*tab[i]).M_rotate = f[i].M_rotate;
 	}
 	printf("Loaded successfully.\n");
 }
 
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) { // this function handles key presses
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) { // Obsługa przycisków
 
 	if (action == GLFW_PRESS)
 	{
-		if (key == GLFW_KEY_ESCAPE)
+		if (key == GLFW_KEY_ESCAPE) // odznaczenie obiektu
 		{	
 			if (selected >= 0)
 			(*tab[selected]).chosen = false;
 			selected = -1;
 		}
-		if (key == GLFW_KEY_TAB)
+		if (key == GLFW_KEY_TAB) // przełączanie między obiektami
 		{
 			if (selected >= 0)
 			(*tab[selected]).chosen = false;
 			if (++selected >= tab.size()) {selected = 0;}
 			(*tab[selected]).chosen = true;
 		}
-		if (key == GLFW_KEY_F1)
+		if (key == GLFW_KEY_F1) // zapisanie stanu do pliku
 		{
 			saveProject("saves/save1.txt");
 		}
-		if (key == GLFW_KEY_F2)
+		if (key == GLFW_KEY_F2) // wczytaniu stanu z pliku
 		{
 			loadProject("saves/save1.txt");
 		}
-		if (key == GLFW_KEY_R) // rotation
+		if (key == GLFW_KEY_R) // tryb rotacji/obracania modelu
 		{
 			mode = "r";
 		}
 		if (mode == "r"){
-			if (key == GLFW_KEY_LEFT)
+			if (key == GLFW_KEY_LEFT) // obrócenie w lewo
 			{
 				if (selected >= 0)
 				(*tab[selected]).rotate(glm::radians(-30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			}
-			if (key == GLFW_KEY_RIGHT)
+			if (key == GLFW_KEY_RIGHT) // ob©ócenie w prawo
 			{
 				if (selected >= 0)
 				(*tab[selected]).rotate(glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			}
-			if (key == GLFW_KEY_UP)
+			if (key == GLFW_KEY_UP) // obrócenie w górę
 			{
 				if (selected >= 0)
 				(*tab[selected]).rotate(glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			}
-			if (key == GLFW_KEY_DOWN)
+			if (key == GLFW_KEY_DOWN) // obócenie w dół
 			{
 				if (selected >= 0)
 				(*tab[selected]).rotate(glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			}
 		}
-		if (key == GLFW_KEY_T) // translation
+		if (key == GLFW_KEY_T) // tryb translacji
 		{
 			mode = "t";
 		}
 		if (mode == "t"){
-			if (key == GLFW_KEY_LEFT)
+			if (key == GLFW_KEY_LEFT) // przesuń w lewo
 			{
 				if (selected >= 0)
 				(*tab[selected]).translate(glm::vec3(0.0f, 0.0f, -0.1f));
 			}
-			if (key == GLFW_KEY_RIGHT)
+			if (key == GLFW_KEY_RIGHT) // przesuń w prawo
 			{
 				if (selected >= 0)
 				(*tab[selected]).translate(glm::vec3(0.0f, 0.0f, 0.1));
@@ -203,81 +200,81 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 				if (selected >= 0)
 				(*tab[selected]).translate(glm::vec3(-0.1f, 0.0f, 0.0f));
 			}
-			if (key == GLFW_KEY_Z)
+			if (key == GLFW_KEY_Z) // przesuń do góry (względem osi Y)
 			{
 				if (selected >= 0)
 				(*tab[selected]).translate(glm::vec3(0.0f, 0.1f, 0.0f));
 			}
-			if (key == GLFW_KEY_X)
+			if (key == GLFW_KEY_X) // przesuń w dół (względem osi Y)
 			{
 				if (selected >= 0)
 				(*tab[selected]).translate(glm::vec3(0.0f, -0.1f, 0.0f));
 			}
 		}
-		if (key == GLFW_KEY_Y) // scaling
+		if (key == GLFW_KEY_Y) // tryb skalowania
 		{
 			mode = "y";
 		}
 		if (mode == "y"){
-			if (key == GLFW_KEY_UP)
+			if (key == GLFW_KEY_UP) // skaluj w góre
 			{
 				if (selected >= 0)
 				(*tab[selected]).scale(glm::vec3(1.5f, 1.5f, 1.5f));
 			}
-			if (key == GLFW_KEY_DOWN)
+			if (key == GLFW_KEY_DOWN) // skaluj w dół
 			{
 				if (selected >= 0)
 				(*tab[selected]).scale(glm::vec3(0.5f, 0.5f, 0.5f));
 			}
 		}
-		if (key == GLFW_KEY_C) // camera
+		if (key == GLFW_KEY_C) // tryb kamery
 		{
 			mode = "c";
 		}
 		if (mode == "c"){
-			if (key == GLFW_KEY_LEFT)
+			if (key == GLFW_KEY_LEFT) // obrót kamery w lewo
 			{
 				cam_rot_speed_x = -PI;
 				cam_rot_speed_z = -PI;
 			}
-			if (key == GLFW_KEY_RIGHT)
+			if (key == GLFW_KEY_RIGHT) // obrót kamery w prawo
 			{
 				cam_rot_speed_x = PI;
 				cam_rot_speed_z = PI;
 			}
-			if (key == GLFW_KEY_UP)
+			if (key == GLFW_KEY_UP) // obrót kamery w góre
 			{
 				cam_rot_speed_y = PI;
 			}
-			if (key == GLFW_KEY_DOWN)
+			if (key == GLFW_KEY_DOWN) // obrót kamery w dół
 			{
 				cam_rot_speed_y = -PI;
 			}
-			if (key == GLFW_KEY_W)
+			if (key == GLFW_KEY_W) // przesunięcie kamery w górę
 			{
 				cam_speed_y = 5.0f;
 			}
-			if (key == GLFW_KEY_S)
+			if (key == GLFW_KEY_S) // przesunięcie kamery w dół
 			{
 				cam_speed_y = -5.0f;
 			}
-			if (key == GLFW_KEY_A)
+			if (key == GLFW_KEY_A) // przesunięcie kamery w lewo
 			{
 				cam_speed_x = -5.0f;
 			}
-			if (key == GLFW_KEY_D)
+			if (key == GLFW_KEY_D) // przesunięcie kamery w prawo
 			{
 				cam_speed_x = 5.0f;
 			}
-			if (key == GLFW_KEY_Z)
+			if (key == GLFW_KEY_Z) // przybliżenie
 			{
 				if (fov >= 5.0f) {fov -= 5.0f;}
 			}
-			if (key == GLFW_KEY_X)
+			if (key == GLFW_KEY_X) // oddalenie
 			{
 				if (fov <= 45.0f) {fov += 5.0f;}
 			}
-			if (key == GLFW_KEY_SPACE) // resets camera settings
+			if (key == GLFW_KEY_SPACE) // resetowanie położenia kamery
 			{
 					cam_angle_x = 4.7f;
 					cam_angle_y = 0.5f;
@@ -348,6 +345,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 	glfwSetKeyCallback(window,keyCallback);
 
 	sp=new ShaderProgram("v_simplest.glsl",NULL,"f_simplest.glsl");
+	// Załadowanie tekstur
 	tex_floor = readTexture("textures/floor_wooden.png");
 	tex_floor_spec = readTexture("textures/floor_wooden_refl.png");
 	tex_walls = readTexture("textures/walls_old.png");
@@ -357,6 +355,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 	tex_coffee_table = readTexture("textures/coffee_table/Coffee Table_Base_Color.png");
 	tex_Chair = readTexture("textures/chair/Chair_Base_Color.png");
 
+	// Stworzenie obiektów modeli
 	room = Room("models/floor.obj", tex_floor, tex_floor_spec, "models/walls.obj", tex_walls, tex_walls_spec);
 
 	chair = Furniture("models/chair.obj", tex_chair);
@@ -364,7 +363,6 @@ void initOpenGLProgram(GLFWwindow* window) {
 	coffee_table = Furniture("models/CoffeeTable.obj", tex_coffee_table);
 	Chair = Furniture("models/Chair.obj", tex_Chair);
 	tab = {&chair, &coffee_table, &Chair, &couch};
-	loadProject("saves/save1.txt");
 }
 
 
@@ -396,10 +394,9 @@ void drawScene(GLFWwindow* window,float cam_angle_x, float cam_angle_y, float ca
     glUniformMatrix4fv(sp->u("V"),1,false,glm::value_ptr(V));
     glUniformMatrix4fv(sp->u("M"),1,false,glm::value_ptr(M));
 
-	room.drawFloor(sp);
-	room.drawWalls(sp);
+	room.drawRoom(sp); // rysowanie modelu pokoju
 	
-	for(int i = 0; i < tab.size(); i++){
+	for(int i = 0; i < tab.size(); i++){ // rysowanie wszystkich modeli mebli
 		(*tab[i]).drawModel(sp);
 	}
 
@@ -436,7 +433,6 @@ int main(void)
 	}
 
 	initOpenGLProgram(window); //Operacje inicjujące
-
 	//Główna pętla
 	glfwSetTime(0); //Zeruj timer
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte

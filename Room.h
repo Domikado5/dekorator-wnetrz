@@ -23,11 +23,11 @@ public:
 	GLuint walls_specular; // odbicia scian
 	std::vector<glm::vec4> floor_vertices; // tablica wierzcholkow
 	std::vector<glm::vec4> floor_normals;
-	std::vector<glm::vec2> floor_uv; // UV mapping (texture coordinates)
+	std::vector<glm::vec2> floor_uv; // koordynaty tekstur
 	std::vector<unsigned int> floor_indices;
     std::vector<glm::vec4> walls_vertices; // tablica wierzcholkow
 	std::vector<glm::vec4> walls_normals;
-	std::vector<glm::vec2> walls_uv; // UV mapping (texture coordinates)
+	std::vector<glm::vec2> walls_uv; // koordynaty tekstur
 	std::vector<unsigned int> walls_indices;
 
 	Room(std::string, GLuint, GLuint, std::string, GLuint, GLuint); // konstruktor

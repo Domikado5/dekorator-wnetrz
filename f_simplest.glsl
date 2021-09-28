@@ -26,6 +26,7 @@ void main(void) {
 	vec4 kd = texture(textureMap0, iTexCoord0);
 	vec4 ks = vec4(1,1,1,1);
 
+	// Uwzglednienie tekstury odbic (jezeli zostala podana)
 	if (specular == 1){
 		ks = texture(textureMap1, iTexCoord0);
 	}
