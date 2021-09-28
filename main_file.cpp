@@ -48,7 +48,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 
 float speed_x=0;
 float speed_y=0;
-float aspectRatio=1;
+float aspectRatio= 1280.0/720.0;
 float radius = 10.0f;
 float fov = 50.0f;
 // zmienne do obracania osią
@@ -80,10 +80,14 @@ GLuint tex1;
 GLuint tex_floor;
 GLuint tex_walls;
 GLuint tex_chair;
-GLuint tex_patio;
+GLuint tex_couch;
+GLuint tex_coffee_table;
+GLuint tex_Chair;
 
 Furniture chair;
-Furniture patio;
+Furniture couch;
+Furniture coffee_table;
+Furniture Chair;
 std::vector<Furniture *> tab;
 
 Room room;
@@ -351,13 +355,17 @@ void initOpenGLProgram(GLFWwindow* window) {
 	tex_floor = readTexture("textures/floor_wooden.png");
 	tex_walls = readTexture("textures/walls_old.png");
 	tex_chair = readTexture("textures/chair.png");
-	tex_patio = readTexture("textures/patio_wood.png");
+	tex_couch = readTexture("textures/couch/Couch_Base_Color.png");
+	tex_coffee_table = readTexture("textures/coffee_table/Coffee Table_Base_Color.png");
+	tex_Chair = readTexture("textures/chair/Chair_Base_Color.png");
 
 	room = Room("models/floor.obj", tex_floor, "models/walls.obj", tex_walls);
 
 	chair = Furniture("models/chair.obj", tex_chair);
-	patio = Furniture("models/patio.obj", tex0);
-	tab = {&chair, &patio};
+	couch = Furniture("models/Couch.obj", tex_couch);
+	coffee_table = Furniture("models/CoffeeTable.obj", tex_coffee_table);
+	Chair = Furniture("models/Chair.obj", tex_Chair);
+	tab = {&chair, &coffee_table, &Chair, &couch};
 }
 
 

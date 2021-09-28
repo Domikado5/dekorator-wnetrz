@@ -62,6 +62,7 @@ void Room::loadModel()
 Room::Room(std::string floor, GLuint floor_tex, std::string walls, GLuint walls_tex)
 {
 	this->M = glm::mat4(1.0f);
+	this->M = glm::translate(this->M, glm::vec3(0.0f, 0.1f, 0.0f));
 	this->floorPath = floor;
 	this->floor_texture = floor_tex;
     this->wallsPath = walls;
