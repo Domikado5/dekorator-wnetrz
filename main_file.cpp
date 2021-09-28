@@ -31,8 +31,6 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "constants.h"
 #include "lodepng.h"
 #include "shaderprogram.h"
-#include "myCube.h"
-#include "myTeapot.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -75,8 +73,6 @@ std::vector<unsigned int> indices;
 int vertexCount;
 int selected = 0;
 
-GLuint tex0;
-GLuint tex1;
 GLuint tex_floor;
 GLuint tex_walls;
 GLuint tex_chair;
@@ -350,8 +346,6 @@ void initOpenGLProgram(GLFWwindow* window) {
 	glfwSetKeyCallback(window,keyCallback);
 
 	sp=new ShaderProgram("v_simplest.glsl",NULL,"f_simplest.glsl");
-	tex0 = readTexture("bricks.png");
-	tex1 = readTexture("sky.png");
 	tex_floor = readTexture("textures/floor_wooden.png");
 	tex_walls = readTexture("textures/walls_old.png");
 	tex_chair = readTexture("textures/chair.png");

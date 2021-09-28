@@ -17,7 +17,7 @@ void Room::loadModel()
 		this->floor_normals.push_back(glm::vec4(normal.x, normal.y, normal.z, 0));
 
 		aiVector3D texCoords = mesh->mTextureCoords[0][i];
-		this->floor_uv.push_back(glm::vec2(texCoords.x, texCoords.y));
+		this->floor_uv.push_back(glm::vec2(texCoords.x, texCoords.y)*8.0f); // powielenie tekstury na podłodze
 	}
 
 	for (int i = 0; i < mesh->mNumFaces; i++) {
@@ -88,6 +88,8 @@ void Room::drawFloor(ShaderProgram *sp)
 	glUniform1i(sp->u("textureMap0"), 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, this->floor_texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 
 	glDrawElements(GL_TRIANGLES, this->floor_indices.size(), GL_UNSIGNED_INT, this->floor_indices.data());
 
