@@ -74,7 +74,9 @@ int vertexCount;
 int selected = 0;
 
 GLuint tex_floor;
+GLuint tex_floor_spec;
 GLuint tex_walls;
+GLuint tex_walls_spec;
 GLuint tex_chair;
 GLuint tex_couch;
 GLuint tex_coffee_table;
@@ -347,19 +349,22 @@ void initOpenGLProgram(GLFWwindow* window) {
 
 	sp=new ShaderProgram("v_simplest.glsl",NULL,"f_simplest.glsl");
 	tex_floor = readTexture("textures/floor_wooden.png");
+	tex_floor_spec = readTexture("textures/floor_wooden_refl.png");
 	tex_walls = readTexture("textures/walls_old.png");
+	tex_walls_spec = readTexture("textures/walls_old_refl.png");
 	tex_chair = readTexture("textures/chair.png");
 	tex_couch = readTexture("textures/couch/Couch_Base_Color.png");
 	tex_coffee_table = readTexture("textures/coffee_table/Coffee Table_Base_Color.png");
 	tex_Chair = readTexture("textures/chair/Chair_Base_Color.png");
 
-	room = Room("models/floor.obj", tex_floor, "models/walls.obj", tex_walls);
+	room = Room("models/floor.obj", tex_floor, tex_floor_spec, "models/walls.obj", tex_walls, tex_walls_spec);
 
 	chair = Furniture("models/chair.obj", tex_chair);
 	couch = Furniture("models/Couch.obj", tex_couch);
 	coffee_table = Furniture("models/CoffeeTable.obj", tex_coffee_table);
 	Chair = Furniture("models/Chair.obj", tex_Chair);
 	tab = {&chair, &coffee_table, &Chair, &couch};
+	loadProject("saves/save1.txt");
 }
 
 

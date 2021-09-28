@@ -59,14 +59,16 @@ void Room::loadModel()
 	material = scene->mMaterials[mesh->mMaterialIndex];
 }
 
-Room::Room(std::string floor, GLuint floor_tex, std::string walls, GLuint walls_tex)
+Room::Room(std::string floor, GLuint floor_tex, GLuint floor_spec, std::string walls, GLuint walls_tex, GLuint walls_spec)
 {
 	this->M = glm::mat4(1.0f);
 	this->M = glm::translate(this->M, glm::vec3(0.0f, 0.1f, 0.0f));
 	this->floorPath = floor;
 	this->floor_texture = floor_tex;
+	this->floor_specular = floor_spec;
     this->wallsPath = walls;
     this->walls_texture = walls_tex;
+	this->walls_specular = walls_spec;
 	this->loadModel();
 }
 
@@ -85,14 +87,19 @@ void Room::drawFloor(ShaderProgram *sp)
 	glEnableVertexAttribArray(sp->a("texCoord0"));  //Włącz przesyłanie danych do atrybutu texCoord0
 	glVertexAttribPointer(sp->a("texCoord0"), 2, GL_FLOAT, false, 0, this->floor_uv.data()); //Wskaż tablicę z danymi dla atrybutu texCoord0
 
+	glUniform1i(sp->u("specular"), 1);
+
 	glUniform1i(sp->u("textureMap0"), 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, this->floor_texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+
+	glUniform1i(sp->u("textureMap1"), 1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, this->floor_specular);
 
 	glDrawElements(GL_TRIANGLES, this->floor_indices.size(), GL_UNSIGNED_INT, this->floor_indices.data());
 
+	glUniform1i(sp->u("specular"), 0);
 	glDisableVertexAttribArray(sp->a("vertex"));
 	glDisableVertexAttribArray(sp->a("normal"));
 	glDisableVertexAttribArray(sp->a("texCoord0"));
@@ -113,12 +120,19 @@ void Room::drawWalls(ShaderProgram *sp)
 	glEnableVertexAttribArray(sp->a("texCoord0"));  //Włącz przesyłanie danych do atrybutu texCoord0
 	glVertexAttribPointer(sp->a("texCoord0"), 2, GL_FLOAT, false, 0, this->walls_uv.data()); //Wskaż tablicę z danymi dla atrybutu texCoord0
 
+	glUniform1i(sp->u("specular"), 1);
+
 	glUniform1i(sp->u("textureMap0"), 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, this->walls_texture);
 
+	glUniform1i(sp->u("textureMap1"), 1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, this->walls_specular);
+
 	glDrawElements(GL_TRIANGLES, this->walls_indices.size(), GL_UNSIGNED_INT, this->walls_indices.data());
 
+	glUniform1i(sp->u("specular"), 0);
 	glDisableVertexAttribArray(sp->a("vertex"));
 	glDisableVertexAttribArray(sp->a("normal"));
 	glDisableVertexAttribArray(sp->a("texCoord0"));

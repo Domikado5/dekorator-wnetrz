@@ -1,8 +1,9 @@
 #version 330
 
 uniform sampler2D textureMap0;
-//uniform sampler2D textureMap1;
+uniform sampler2D textureMap1;
 uniform int chosen;
+uniform int specular;
 
 out vec4 pixelColor; //Zmienna wyjsciowa fragment shadera. Zapisuje sie do niej ostateczny (prawie) kolor piksela
 
@@ -11,7 +12,6 @@ in vec4 n;
 in vec4 l;
 in vec4 v;
 in vec2 iTexCoord0;
-//in vec2 iTexCoord1;
 
 void main(void) {
 
@@ -25,6 +25,10 @@ void main(void) {
 	//Parametry powierzchni
 	vec4 kd = texture(textureMap0, iTexCoord0);
 	vec4 ks = vec4(1,1,1,1);
+
+	if (specular == 1){
+		ks = texture(textureMap1, iTexCoord0);
+	}
 
 	//Obliczenie modelu oświetlenia
 	float nl = clamp(dot(mn, ml), 0, 1);

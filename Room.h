@@ -18,7 +18,9 @@ public:
 	std::string floorPath; // sciezka do modelu podlogi
     std::string wallsPath; // sciezka do modelu podlogi
 	GLuint floor_texture; // tekstura podlogi
+	GLuint floor_specular; // odbicia podlogi
     GLuint walls_texture; // tekstura scian
+	GLuint walls_specular; // odbicia scian
 	std::vector<glm::vec4> floor_vertices; // tablica wierzcholkow
 	std::vector<glm::vec4> floor_normals;
 	std::vector<glm::vec2> floor_uv; // UV mapping (texture coordinates)
@@ -28,7 +30,7 @@ public:
 	std::vector<glm::vec2> walls_uv; // UV mapping (texture coordinates)
 	std::vector<unsigned int> walls_indices;
 
-	Room(std::string, GLuint, std::string, GLuint); // konstruktor
+	Room(std::string, GLuint, GLuint, std::string, GLuint, GLuint); // konstruktor
 
 	Room(){};
 
