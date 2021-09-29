@@ -344,7 +344,7 @@ void initOpenGLProgram(GLFWwindow* window) {
 	glfwSetWindowSizeCallback(window,windowResizeCallback);
 	glfwSetKeyCallback(window,keyCallback);
 
-	sp=new ShaderProgram("v_simplest.glsl",NULL,"f_simplest.glsl");
+	sp=new ShaderProgram("vertex_shader.glsl",NULL,"fragment_shader.glsl");
 	// Załadowanie tekstur
 	tex_floor = readTexture("textures/floor_wooden.png");
 	tex_floor_spec = readTexture("textures/floor_wooden_refl.png");
